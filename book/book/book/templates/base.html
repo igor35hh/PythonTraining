@@ -1,0 +1,17 @@
+<html>
+
+<header>
+	<title>{% block title %}{% endblock %}</title>
+</header>
+
+<body>
+	<h3>Hello, it is current time</h3>
+	{% block content %}{% endblock %}
+	{% block footer %}
+	<hr>
+	<p>Thanks you!</p>
+	{% endblock %}
+
+</body>
+
+</html>
