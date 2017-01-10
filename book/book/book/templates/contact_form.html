@@ -1,0 +1,49 @@
+<html>
+
+<header>
+	<title>Call to us</title>
+	<style type="text.css">
+		ul.errorlist {
+			margin: 0;
+			padding: 0;
+		}
+		.errorlist li {
+			background-color: red;
+			color: white;
+			display: block;
+			front-size: 10px;
+			margin: 0 0 3px;
+			padding: 4px 5px;
+		}
+	</style>
+</header>
+
+<body>
+	<h1>Call to us</h1>
+	{% if form.errors %}
+		<ul>
+			<li>{{ form.errors }}</li>	
+		</ul>
+	{% endif %}	
+	<form action="/contact/" method="post">
+		
+		<div class="field">
+			{{ form.subject.errors }}
+			<label for="id_subject">Theme:</label>
+			{{ form.subject }}
+		</div>
+		<div class="field">
+			{{ form.email.errors }}
+			<label for="id_email">Your address e-mail:</label>
+			{{ form.email }}
+		</div>
+		<div class="field">
+			{{ form.message.errors }}
+			<label for="id_message">Message:</label>
+			{{ form.message }}
+		</div>
+		<input type="submit" value="Send">
+	</form>
+</body>
+
+</html>

@@ -22,5 +22,8 @@ urlpatterns = [
     url(r'^hello/$', views.hello),
     url(r'^time/$', views.time),
     url(r'^time/plus/(\d{1,2})/$', views.timeplus),
+    url(r'^search-form/$', views.search_form),
+    url(r'^contact/$', views.contact),
+    url(r'^contact/thanks/$', views.contact_thanks),
     url(r'^admin/', include(admin.site.urls)),
 ]

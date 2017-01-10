@@ -1,0 +1,22 @@
+<html>
+
+<header>
+	<title><p>You found: <strong>{{query}}</strong></p></title>
+</header>
+
+<body>
+	
+	{% if books %}
+		<p>Found {{ books|length }} books {{ books|pluralize }}.</p>
+		<ul>
+			{% for book in books %}
+			<li>{{ book.title }}</li>
+			{% endfor %}
+		</ul>
+	{% else %}
+		<p>The books, for this query not found.</p>
+	{% endif %}
+	
+</body>
+
+</html>
