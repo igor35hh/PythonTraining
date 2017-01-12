@@ -26,4 +26,4 @@ urlpatterns = [
     url(r'^contact/$', views.contact),
     url(r'^contact/thanks/$', views.contact_thanks),
     url(r'^admin/', include(admin.site.urls)),
-]
+]                        
