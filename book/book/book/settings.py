@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'books',
+	'polls',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -60,7 +61,7 @@ ROOT_URLCONF = 'book.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR+'\\book\\templates'],
+        'DIRS': [BASE_DIR+'\\book\\templates', BASE_DIR+'\\polls\\templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

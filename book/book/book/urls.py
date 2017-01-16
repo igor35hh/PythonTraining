@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 import views
+from polls import urls
 
 urlpatterns = [
     url(r'^$', views.welcome),
@@ -25,5 +26,8 @@ urlpatterns = [
     url(r'^search-form/$', views.search_form),
     url(r'^contact/$', views.contact),
     url(r'^contact/thanks/$', views.contact_thanks),
+    #
+    url(r'^polls/', include(urls, namespace="polls")),
+    #
     url(r'^admin/', include(admin.site.urls)),
 ]                        
