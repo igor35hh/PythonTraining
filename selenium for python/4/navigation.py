@@ -32,13 +32,13 @@ class NavigationTest(unittest.TestCase):
         #sleep(1)
         
         self.driver.back()
-        self.assertTrue(WebDriverWait(self.driver, 5))
+        self.assertTrue(WebDriverWait(self.driver, 10).until(expected_conditions.title_is("selenium webdriver - Поиск в Google")))
         
         self.driver.forward()
-        self.assertTrue(WebDriverWait(self.driver, 5))
+        self.assertTrue(WebDriverWait(self.driver, 10).until(expected_conditions.title_is("Selenium WebDriver")))
 
         self.driver.refresh()
-        self.assertTrue(WebDriverWait(self.driver, 5))
+        self.assertTrue(WebDriverWait(self.driver, 10).until(expected_conditions.title_is("Selenium WebDriver")))
         
     def tearDown(self):
         self.driver.quit()
