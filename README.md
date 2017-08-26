@@ -1,5 +1,7 @@
 # Python training application
 
-there are two applications books and polls in repo (python 2.7, django 1.8)
+there are applications books and polls in repo (python 2.7, django 1.8)
+application blogflask (python 3.6,  flask)
+selenium training (python 3.6)
 
-folder threads contains several thread examples
+and different examples of code
