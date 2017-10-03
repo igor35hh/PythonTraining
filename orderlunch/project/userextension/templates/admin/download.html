@@ -31,14 +31,20 @@
 {% if errors %}
 <p class="errornote">
 Error: file was not uploaded
+
+{% if form.errors %}
+    {% for key,value in form.errors.items %}
+    	{{ value|escape }}
+    {% endfor %}
+{% endif %}
+
 </p>
 {% endif %}
 
 <form action="{% url 'admin:auth_user_downloadcsv' %}" method="post" enctype="multipart/form-data">
   {% csrf_token %}
-  <input type="file" name="filename" accept=".csv">
-  <input type="submit">
-  
+  {{ form.filename }}
+  <input type="submit"> 
 </form>
 </div>
 {% endblock %}

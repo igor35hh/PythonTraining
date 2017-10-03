@@ -3,6 +3,20 @@ from django.contrib.auth.models import User
 from functools import update_wrapper
 from .forms import UploadFileForm
 from django.http import HttpResponseRedirect
+from django.contrib import messages
+
+def handle_uploaded_file(filename):
+    import string
+    from random import choice
+    alphabet = string.ascii_letters + string.digits
+    with open(filename, 'r') as fp:
+        for line in fp:
+            name, lastname, email = line.split(';')
+            username = name +' '+ lastname   
+            password = ''.join(choice(alphabet) for i in range(8))
+            print(username, email, password)
+            #newuser = User.objects.create_user(username, email, password)
+            print(line)
 
 class UserAdminNew(admin.ModelAdmin):
     
@@ -20,19 +34,23 @@ class UserAdminNew(admin.ModelAdmin):
                 #print(file.content_type)
                 #print(file.size)
                 #print(file.read())
+                #fileup = request.FILES['filename']
                 
-                fileup = request.FILES['filename']
-                with open('file.name', 'wb+') as destination:
+                fileup = form.cleaned_data['filename']
+                
+                print(fileup.name, fileup.size)
+                
+                
+                with open(fileup.name, 'wb+') as destination:
                     for chunk in fileup.chunks():
                         destination.write(chunk)
-                
-                with open('file.name', 'r') as fp:
-                    for line in fp:
-                       print(line)
+                                
+                messages.add_message(request, messages.INFO, 'File has been dowloaded')
+                        
+                handle_uploaded_file(fileup.name)
                 
                 return HttpResponseRedirect('/admin/auth/user/')
             else:
-                
                 context.update({
                     'errors': True,
                     'original':'Download CSV',
@@ -40,6 +58,7 @@ class UserAdminNew(admin.ModelAdmin):
                     'has_change_permission': self.has_change_permission(request, None),
                     'has_delete_permission': self.has_delete_permission(request, None),
                     'title':'Select scv',
+                    'form': form,
                 })
                 return admin.ModelAdmin.changelist_view(self, request, context)
             
@@ -59,12 +78,14 @@ class UserAdminNew(admin.ModelAdmin):
         template_name = 'admin/download.html'
         self.change_list_template = template_name
         context = self.admin_site.each_context(request)
+        form = UploadFileForm()
         context.update({
             'original':'Download CSV',
             'has_add_permission': self.has_add_permission(request),
             'has_change_permission': self.has_change_permission(request, None),
             'has_delete_permission': self.has_delete_permission(request, None),
             'title':'Select scv',
+            'form': form,
         })
         return admin.ModelAdmin.changelist_view(self, request, context)
     
