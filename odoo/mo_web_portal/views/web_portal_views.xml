@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<odoo>
+	<record id="view_form_web_portal" model="ir.ui.view">
+        <field name="name">Web portal</field>
+        <field name="model">web.portal</field>
+		<field name="arch" type="xml">
+			<form string="Web portal">
+				<header>
+					<button name="do_create_portal" type="object"  string="Create portal" class="oe_highlight"/>
+				    <button name="do_synchronize_data" type="object"  string="Synchronize data" />
+				    <button name="do_change_theme" type="object"  string="Change theme" />
+				    <button name="do_check_portal" type="object"  string="Check portal" />
+				</header>	
+				 <sheet>
+				 	<group name="group_top">
+				 		<group name="group_left">
+							<field name="name"/>
+						</group>
+						<group name="group_right">
+						     <field name="address"/>
+						</group>
+						<group name="group_left">
+							<field name="login"/>
+						</group>
+						<group name="group_right">
+						     <field name="password"/>
+						</group>
+						<group name="group_left">
+							<field name="partner"/>
+						</group>
+						<group name="group_right">
+						     <field name="status"/>
+						</group>
+				 	</group>
+				</sheet>			
+			</form>
+		</field>
+	</record>
+	
+	<record id="view_tree_web_portal" model="ir.ui.view">
+	      <field name="name">Web portal</field>
+	      <field name="model">web.portal</field>
+	      <field name="arch" type="xml">
+	        <tree decoration-danger="status == 'error'">
+	          <field name="name"/>
+	          <field name="partner"/>
+	          <field name="status"/>
+	        </tree>
+	      </field>
+	</record>
+	
+</odoo>

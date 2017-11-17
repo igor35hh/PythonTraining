@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<odoo>
+    <act_window id="action_web_portal"
+      name="Web portal"
+      res_model="web.portal"
+      view_mode="tree,form" />
+    <menuitem id="menu_web_portal"
+      name="Web portal"
+      web_icon="mo_web_portal,static/description/icon.png"
+      action="action_web_portal" />
+</odoo>
