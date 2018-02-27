@@ -1,0 +1,10 @@
+{% extends "main.html" %}
+{% autoescape None %}
+
+{% block body %}
+<h2>Recommended Reading</h2>
+<p><a href="/add/">Add Book</a></p>
+	{% for book in books %}
+ 	 	{{ modules.Book(book) }}
+	{% end %}
+{% end %}

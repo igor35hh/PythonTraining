@@ -1,0 +1,28 @@
+{% extends "main.html" %}
+{% autoescape None %}
+
+{% block body %}
+{{ modules.Book(book) }}
+
+<form method="POST">
+	<input type="hidden" name="isbn" value="{{ book.get('isbn', '')}}"><br>
+
+	Comment:<br>
+	Author <input type="text" name="author"><br>
+	<textarea name="comment" rows="5" cols="40"></textarea><br>
+	<input type="submit" value="Add comment">
+</form>
+
+<br>
+
+<div id="discussion">
+		<h3>Comments</h3>
+		{% for key in comments %}
+		<div class="comment">
+		  	<p class="comment_user"><span class="bold">{{ comments[key]["author"] }}</span> says:</p>
+		  	<p class="comment_text">{{ comments[key]["comment"] }}</p>
+		</div>
+		{% end %}
+	</div>
+
+{% end %}
