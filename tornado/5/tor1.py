@@ -22,11 +22,15 @@ class Application(tornado.web.Application):
             (r"/delete/([0-9Xx\-]+)", DeleteHandler),
             (r"/add/", AddEditHandler),
             (r"/discussion/", DiscussionHandler),
+            (r'/login', LoginHandler),
+            (r'/logout', LogoutHandler),
         ]
         settings = dict(
             template_path=os.path.join(os.path.dirname(__file__), "web"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             ui_modules={"Book": BookModule},
+            cookie_secret = "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",
+            login_url='/login',
             debug=True,
         )
         
@@ -34,8 +38,47 @@ class Application(tornado.web.Application):
         self.db = conn["bookstore"]
         tornado.web.Application.__init__(self, handlers, **settings)
         
-class DeleteHandler(tornado.web.RequestHandler):
+class BaseHandler(tornado.web.RequestHandler):
+    def get_current_user(self):
+        return self.get_secure_cookie('username')
+        
+class LogoutHandler(BaseHandler):
     
+    @tornado.web.authenticated
+    def get(self):
+        if (self.get_argument('logout', None)):
+            self.clear_cookie('username')
+            self.redirect('/')
+        
+class LoginHandler(BaseHandler):
+    def get(self):
+        self.render('login.html')
+    
+    def post(self):
+        username = self.get_argument("username", "")
+        password = self.get_argument("password", "")
+        
+        print(username, password)
+        
+        if username and password:
+            coll = self.application.db.users
+            user = dict()
+            user = coll.find_one({"user": username})
+            if user:
+                if password == user["password"]:
+                    self.set_secure_cookie('username', self.get_argument('username'))
+                else:
+                    self.clear_cookie('username')
+            else:
+                coll.insert({"user": username, "password":password}) 
+                self.set_secure_cookie('username', self.get_argument('username'))
+               
+        self.redirect('/')
+        
+        
+class DeleteHandler(BaseHandler):
+    
+    @tornado.web.authenticated
     def post(self, isbn=None):
         coll = self.application.db.books
         if isbn:
@@ -46,23 +89,31 @@ class DeleteHandler(tornado.web.RequestHandler):
         self.set_header(404)
         return
         
-class BookHandler(tornado.web.RequestHandler):
+class BookHandler(BaseHandler):
+    
+    @tornado.web.authenticated
     def get(self, isbn=None):
         if isbn:
             coll = self.application.db.books
             book = coll.find_one({"isbn":isbn})
+            if 'comments' in book:
+                comments = book['comments']
+            else:
+                comments = {}
             if book:
                 self.render(
                     'one_book.html',
                     page_title = "Burt's Books | " + book['title'],
                     header_text = book['title'],
                     book=book,
-                    comments=book['comments']
+                    comments=comments,
+                    user=self.current_user,
                 )
                 return
         self.set_header(404)
         return
     
+    @tornado.web.authenticated
     def post(self, isbn=None):
         coll = self.application.db.books
         book = dict()
@@ -72,13 +123,16 @@ class BookHandler(tornado.web.RequestHandler):
             
             book['isbn'] = self.get_argument('isbn', None)
             
-            data_dict = book['comments']
+            if 'comments' in book:
+                data_book = book['comments']
+            else:
+                data_book = {}
             dict_data = {
                 str(random.randint(1000,9999)):{'author':self.get_argument('author', None), 'comment':self.get_argument('comment', None)}
             }
-            data_dict.update(dict_data)
+            data_book.update(dict_data)
             
-            book['comments'] = data_dict
+            book['comments'] = data_book
             
             coll.save(book)
             
@@ -88,7 +142,8 @@ class BookHandler(tornado.web.RequestHandler):
             self.set_header(404)
             return 
         
-class AddEditHandler(tornado.web.RequestHandler):
+class AddEditHandler(BaseHandler):
+    @tornado.web.authenticated
     def get(self, isbn=None):
         book = dict()
         if isbn:
@@ -98,9 +153,11 @@ class AddEditHandler(tornado.web.RequestHandler):
             'book_edit.html',
             page_title = "Burt's Books | Home",
             header_text = "Edit book",
-            book=book
+            book=book,
+            user=self.current_user,
         )
-        
+    
+    @tornado.web.authenticated
     def post(self, isbn=None):
         book_fields = ['isbn', 'title', 'subtitle', 'image', 'author', 'date_released', 'description']
         coll = self.application.db.books
@@ -121,12 +178,14 @@ class AddEditHandler(tornado.web.RequestHandler):
         self.redirect("/recommended/")
         
 
-class IndexHandler(tornado.web.RequestHandler):
+class IndexHandler(BaseHandler):
+    
     def get(self):
         self.render(
             'index.html',
             page_title = "Burt's Books | Home",
             header_text = "Welcome to Burt's Books!",
+            user=self.current_user,
         )
         
 class BookModule(tornado.web.UIModule):
@@ -139,30 +198,34 @@ class BookModule(tornado.web.UIModule):
     def javascript_files(self):
         return "js/recommended.js"
         
-class RecommendedHandler(tornado.web.RequestHandler):
+class RecommendedHandler(BaseHandler):
+    @tornado.web.authenticated
     def get(self):
         coll = self.application.db.books
         books = coll.find()
         self.render('recommended.html', 
                     page_title = "Burt's Books | Recommended Reading",
                     header_text = "Recommended Reading", 
-                    books=books
+                    books=books,
+                    user=self.current_user,
         )
         
-class DiscussionHandler(tornado.web.RequestHandler):
+class DiscussionHandler(BaseHandler):
+    @tornado.web.authenticated
     def get(self):
         coll = self.application.db.books
         books = coll.find()
         comments={}
         for book in books:
-            comments.update(book['comments'])
-            print(book['comments'])
-        print(comments)
+            if 'comments' in book:
+                comments.update(book['comments'])
+                
         self.render(
             "discussion.html",
             page_title = "Burt's Books | Discussion",
             header_text = "Talkin' About Books With Burt",
-            comments=comments
+            comments=comments,
+            user=self.current_user,
         )
     
 def main():

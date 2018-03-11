@@ -10,7 +10,11 @@
 		</header>
 		<div id="main">
 			<div id="content">
-				{% block body %}{% end %}
+				<h4>{{ user }}</h4>
+				<p><a href="/logout?logout={{ user }}">Log out</a></p>
+				{% block body %}
+					
+				{% end %}
 			</div>
 		</div>
 		<footer>

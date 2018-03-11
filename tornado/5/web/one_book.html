@@ -8,7 +8,7 @@
 	<input type="hidden" name="isbn" value="{{ book.get('isbn', '')}}"><br>
 
 	Comment:<br>
-	Author <input type="text" name="author"><br>
+	Author <input type="text" name="author" value="{{ user }}"><br>
 	<textarea name="comment" rows="5" cols="40"></textarea><br>
 	<input type="submit" value="Add comment">
 </form>
